@@ -222,4 +222,21 @@ fun createLifeGrid (n, lives) = if n < 0 then raise IllegalArgumentException els
 ;
 
 
+(*
+ * 4.2
+ * determineStatusOf
+ * Returns if the game is OnGoing or Extinct
+ *)
+fun determineStatusOf grid = 
+    let
+        fun isCellAlive(total, Alive(_)) = true
+        |   isCellAlive(total, Dead(_)) = total orelse false
+        ;
+        fun isRowAlive(total, row) = total orelse (reduce (isCellAlive, false) row);
+    in
+        if (reduce (isRowAlive, false) grid) then OnGoing else Extinct
+    end
+;
+
+
 (* (use "test.sml") *)
