@@ -101,7 +101,34 @@ fun sort [] = []
 
 (************ Part 1 ************)
 
-fun
+(*
+ * Help function - Filters ls by predicate p
+ *)
+fun filter p ls = 
+    if null ls then []
+    else if p(hd ls) then (hd ls)::(filter p (tl ls)) else filter p (tl ls)
+;
+
+
+(*
+ * 2.1
+ * choose
+ * Returns all the possible ways to get k elements from ls
+ *)
+fun choose (k, ls) = 
+    if k < 0 then raise IllegalArgumentException
+    else if k = 0 then [[]]
+    else if null ls orelse k > List.length(ls) then []
+    else 
+        let
+            fun addToList n ls = n::ls;
+            val (h::rest) = ls;
+            val chosen = map (addToList h) (choose(k - 1, rest));
+            val not_chosen = choose(k, rest);
+        in
+            filter (fn l => not(null l))  (chosen @ not_chosen)
+        end
+;
 
 
 (* (use "test.sml") *)
