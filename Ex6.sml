@@ -66,7 +66,12 @@ fun split [] = ([], [])
         end
 ;
         
-        
+
+(*
+ * 1.3
+ * merge
+ * Returns a sorted merged list from 2 sorted lists
+ *)        
 fun merge (ls, []) = ls
 |   merge ([], ls) = ls
 |   merge (h1::rest1, h2::rest2) = 
@@ -75,6 +80,12 @@ fun merge (ls, []) = ls
         else h2::merge(h1::rest1, rest2)
 ;
 
+
+(*
+ * 1.4
+ * sort
+ * Returns ls sorted by MergeSort.
+ *)
 fun sort [] = []
 |   sort (h::[]) = [h]
 |   sort ls = 
@@ -86,6 +97,11 @@ fun sort [] = []
         merge(s1, s2)
     end
 ;
+
+
+(************ Part 1 ************)
+
+fun
 
 
 (* (use "test.sml") *)
