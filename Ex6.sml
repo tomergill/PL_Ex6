@@ -302,4 +302,25 @@ fun nextGeneration grid =
 ;
 
 
+(*
+ * 4.4
+ * determineNState
+ * Returns the game after N generations. If the game goes Extinct then the the developing stops and it is returned.
+ *)
+fun determineNState (state:LifeState, n) = 
+    if n < 0 then raise IllegalArgumentException
+    else if n = 0 then state
+    else 
+        case (#2 state) 
+            of Extinct => state
+            | OnGoing =>
+                let
+                    val new_grid = nextGeneration (#1 state);
+                    val status = determineStatusOf(new_grid);
+                in
+                    determineNState((new_grid, status), (n - 1))
+                end
+;
+
+
 (* (use "test.sml") *)
