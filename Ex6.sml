@@ -49,8 +49,13 @@ fun rotate ([], n) =
             in
                 sublist(ls, m, len) @ sublist(ls, 0, m)
             end;
-            
-
+ 
+ 
+(*
+ * 1.2
+ * split
+ * Returns 2 lists from the received list, for every 2 items one goes to the 1st list and the other to the 2nd.
+ *)
 fun split [] = ([], [])
 |   split (h::[]) = ([h], [])
 |   split (h1::h2::rest) = 
@@ -58,7 +63,29 @@ fun split [] = ([], [])
             val (l1, l2) = split(rest)
         in
             (h1::l1, h2::l2)
-        end;
+        end
+;
+        
+        
+fun merge (ls, []) = ls
+|   merge ([], ls) = ls
+|   merge (h1::rest1, h2::rest2) = 
+        if h1 < h2 
+        then h1::merge(rest1, h2::rest2) 
+        else h2::merge(h1::rest1, rest2)
+;
+
+fun sort [] = []
+|   sort (h::[]) = [h]
+|   sort ls = 
+    let
+        val (l1, l2) = split ls
+        val s1 = sort l1
+        val s2 = sort l2
+    in
+        merge(s1, s2)
+    end
+;
 
 
 (* (use "test.sml") *)
