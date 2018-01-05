@@ -6,12 +6,11 @@
  *)
  
 exception IllegalArgumentException;
- 
- 
-(************ Part 1 ************)
+
+(******** Auxiliary functions ********)
 
 (*
- * Help function
+ * Auxiliary function
  * Returns the sublist of ls from place s up to e (not included)
  *)
 fun sublist ([], s, e) = []
@@ -27,9 +26,37 @@ fun sublist ([], s, e) = []
             if s < 0 orelse e > len orelse s >= e
             then raise IllegalArgumentException
             else sublist_help s
-        end;
-
+        end
+;
         
+        
+(*
+ * Auxiliary function
+ * Filters ls by predicate p
+ *)
+fun filter p ls = 
+    if null ls then []
+    else if p(hd ls) then (hd ls)::(filter p (tl ls)) else filter p (tl ls)
+;
+
+
+(*
+ * Auxiliary function
+ * Reduces the list from unit with oper
+ *)
+fun reduce (oper, u) ls = 
+    let 
+        fun reduce_helper (total, i) = 
+            if i >= List.length(ls) then total
+            else reduce_helper(oper(total, List.nth(ls, i)), i + 1)
+    in
+        reduce_helper(u, 0)
+    end
+;
+ 
+ 
+(************ Part 1 ************)
+      
 (*
  * 1.1
  * rotate
@@ -102,15 +129,6 @@ fun sort [] = []
 (************ Part 2 ************)
 
 (*
- * Help function - Filters ls by predicate p
- *)
-fun filter p ls = 
-    if null ls then []
-    else if p(hd ls) then (hd ls)::(filter p (tl ls)) else filter p (tl ls)
-;
-
-
-(*
  * 2.1
  * choose
  * Returns all the possible ways to get k elements from ls
@@ -161,6 +179,46 @@ datatype OutputArgs = IntNum of int | RealNum of real | Str of string;
 fun multiFunc (IntPair(x, y)) = IntNum(x * y)
 |   multiFunc (RealTriple(x, y, z)) = RealNum((x + y + z) / 3.0)
 |   multiFunc (StringSingle(s)) = Str(implode(rev(explode(s))))
+;
+
+
+(************ Part 4 ************)
+
+datatype Square = Alive of int | Dead of int;
+datatype GameStatus = Extinct | OnGoing;
+type LifeState = Square list list * GameStatus;
+
+
+(*
+ * 4.1
+ * createLifeGrid
+ * Creates a life grid (list of lists of Squares) sized nxn where the cells in lives are of type Alive(0) and those
+ * who aren't are Dead(0)
+ *)
+fun createLifeGrid (n, lives) = if n < 0 then raise IllegalArgumentException else if n = 0 then [] else
+    let
+        fun isInRow (r:int) ((x,y)) = x=r;
+        fun isColIn (c:int) (total, (x,y)) = total orelse (y = c);
+        fun createLifeRow (j, alives) = 
+            if j >= n then []
+            else
+                if (reduce ((isColIn j), false) (alives)) (* If this cell is alive *)
+                then Alive(0)::createLifeRow(j + 1, alives)
+                else Dead(0)::createLifeRow(j + 1, alives)
+        ;
+        fun createLifeGrid_helper i = 
+            if i >= n then []
+            else
+                let
+                    val AliveInRow = (filter (isInRow i) lives)
+                    val row = createLifeRow(0, AliveInRow);
+                in
+                    [row] @ (createLifeGrid_helper (i + 1))
+                end
+        ;
+    in
+        createLifeGrid_helper 0
+    end
 ;
 
 
