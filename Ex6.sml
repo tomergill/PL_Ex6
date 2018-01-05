@@ -99,7 +99,7 @@ fun sort [] = []
 ;
 
 
-(************ Part 1 ************)
+(************ Part 2 ************)
 
 (*
  * Help function - Filters ls by predicate p
@@ -129,6 +129,17 @@ fun choose (k, ls) =
             filter (fn l => not(null l))  (chosen @ not_chosen)
         end
 ;
+
+
+(*
+ * 2.2
+ * isPolindrom
+ * Returns true if str is a palindrome, otherwise false.
+ *)
+fun isPolindrom str = (str=implode(rev(explode(str))));
+
+
+(************ Part 3 ************)
 
 
 (* (use "test.sml") *)
