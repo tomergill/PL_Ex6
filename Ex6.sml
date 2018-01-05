@@ -7,7 +7,7 @@
  
 exception IllegalArgumentException;
 
-(******** Auxiliary functions ********)
+(************************ Auxiliary functions ************************)
 
 (*
  * Auxiliary function
@@ -55,7 +55,7 @@ fun reduce (oper, u) ls =
 ;
  
  
-(************ Part 1 ************)
+(**************************** Part 1 ****************************)
       
 (*
  * 1.1
@@ -126,7 +126,7 @@ fun sort [] = []
 ;
 
 
-(************ Part 2 ************)
+(**************************** Part 2 ****************************)
 
 (*
  * 2.1
@@ -140,9 +140,8 @@ fun choose (k, ls) =
     else 
         let
             fun addToList n ls = n::ls;
-            val (h::rest) = ls;
-            val chosen = map (addToList h) (choose(k - 1, rest));
-            val not_chosen = choose(k, rest);
+            val chosen = map (addToList (hd ls)) (choose(k - 1, (tl ls)));
+            val not_chosen = choose(k, (tl ls));
         in
             filter (fn l => not(null l))  (chosen @ not_chosen)
         end
@@ -157,7 +156,7 @@ fun choose (k, ls) =
 fun isPolindrom str = (str=implode(rev(explode(str))));
 
 
-(************ Part 3 ************)
+(**************************** Part 3 ****************************)
 
 datatype Arguments
  = IntPair of int * int
@@ -182,7 +181,7 @@ fun multiFunc (IntPair(x, y)) = IntNum(x * y)
 ;
 
 
-(************ Part 4 ************)
+(**************************** Part 4 ****************************)
 
 datatype Square = Alive of int | Dead of int;
 datatype GameStatus = Extinct | OnGoing;
@@ -192,8 +191,8 @@ type LifeState = Square list list * GameStatus;
 (*
  * 4.1
  * createLifeGrid
- * Creates a life grid (list of lists of Squares) sized nxn where the cells in lives are of type Alive(0) and those
- * who aren't are Dead(0)
+ * Creates a life grid (list of lists of Squares) sized nxn where the cells in lives are of type 
+ * Alive(0) and those who aren't are Dead(0)
  *)
 fun createLifeGrid (n, lives) = if n < 0 then raise IllegalArgumentException else if n = 0 then [] else
     let
@@ -305,7 +304,8 @@ fun nextGeneration grid =
 (*
  * 4.4
  * determineNState
- * Returns the game after N generations. If the game goes Extinct then the the developing stops and it is returned.
+ * Returns the game after N generations. 
+ * If the game goes Extinct then the the developing stops and it is returned.
  *)
 fun determineNState (state:LifeState, n) = 
     if n < 0 then raise IllegalArgumentException
@@ -323,4 +323,46 @@ fun determineNState (state:LifeState, n) =
 ;
 
 
-(* (use "test.sml") *)
+(**************************** Part 5 ****************************)
+
+exception EmptyList;
+datatype 'a Seq = Cons of 'a * (unit -> 'a Seq) | Nil;
+
+
+(*
+ * Auxiliary function
+ * Returns the first element in the sequence
+ *)
+fun head (Cons(x,_)) = x 
+|   head Nil = raise EmptyList;
+
+
+(*
+ * Auxiliary function
+ * Returns the sequence without the first element
+ *)
+fun tail (Cons(_,t)) = t () 
+|   tail Nil = raise EmptyList
+;
+
+
+(*
+ * Auxiliary function
+ * Returns a list of the first n elements from the sequence
+ *)
+fun take (0, _) = []
+|   take (n, Nil) = raise EmptyList
+|   take (n, Cons(h, t)) = h::take(n - 1, t())
+;
+
+
+(*
+ * 5
+ * upF
+ * Returns the sequence generated from u and activation function f 
+ * (so the sequence will be u, f(u), f(f(u)), f(f(f(u))), ... )
+ *)
+fun upF (u, f) = Cons(u, (fn () => upF(f(u), f)));
+
+
+(use "test.sml")
