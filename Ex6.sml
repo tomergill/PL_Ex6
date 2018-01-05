@@ -141,5 +141,27 @@ fun isPolindrom str = (str=implode(rev(explode(str))));
 
 (************ Part 3 ************)
 
+datatype Arguments
+ = IntPair of int * int
+ | RealTriple of real * real * real
+ | StringSingle of string;
+
+datatype OutputArgs = IntNum of int | RealNum of real | Str of string;
+
+
+(*
+ * 3
+ * multiFunc
+ * Output depends on input:
+ * --- If got IntPair returns the elements multiplication.
+ * --- If got RealTriple returns the average.
+ * --- If got StringSingle returns it's reverse.
+ * Any ways all the outputs' type is OutputArgs.
+ *)
+fun multiFunc (IntPair(x, y)) = IntNum(x * y)
+|   multiFunc (RealTriple(x, y, z)) = RealNum((x + y + z) / 3.0)
+|   multiFunc (StringSingle(s)) = Str(implode(rev(explode(s))))
+;
+
 
 (* (use "test.sml") *)
