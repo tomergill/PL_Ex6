@@ -239,4 +239,67 @@ fun determineStatusOf grid =
 ;
 
 
+(*
+ * Auxiliary function
+ * Returns how many neighbours of (i, j) are alive in grid
+ *)
+fun howManyAliveNeighbours(grid, i, j) = 
+    let 
+        val n = List.length(grid);
+        fun neighbourIn (x,y) = 
+            if x >= 0 andalso x < n andalso y >= 0 andalso y < n
+            then case List.nth(List.nth(grid, x), y)
+                of Alive(_) => 1
+                |  Dead(_) => 0
+            else 0
+        ;
+    in
+        neighbourIn(i -1, j - 1) + neighbourIn(i -1, j) + neighbourIn(i -1, j + 1) +
+        neighbourIn(i, j - 1) + neighbourIn(i, j + 1) +
+        neighbourIn(i + 1, j - 1) + neighbourIn(i + 1, j) + neighbourIn(i + 1, j + 1)
+    end
+;
+
+
+(*
+ * Auxiliary function
+ * Returns the cell (i, j) in the next generation in grid
+ *)
+fun determineCell (grid, i, j) =
+    let
+        val neighbours = howManyAliveNeighbours(grid, i, j);
+    in
+        case List.nth(List.nth(grid, i), j)
+            of Dead(n) => if neighbours = 3 then Alive(0) else Dead(n + 1)
+            |  Alive(age) => if neighbours < 2 orelse neighbours > 3 then Dead(0) else Alive(age + 1)
+    end
+;
+
+
+(*
+ * 4.3
+ * nextGeneration
+ * Returns grid after one generation
+ *)
+fun nextGeneration grid = 
+    let
+        val n = List.length(grid);
+        fun determineRow i = if i >= n then [] else
+            let
+                fun determineCells j = 
+                    if j >= n then [] 
+                    else determineCell(grid, i, j)::determineCells(j + 1)
+                    
+                ;
+                val row = determineCells 0;
+            in
+                row::(determineRow (i + 1))
+            end
+        ;
+    in
+        determineRow 0
+    end
+;
+
+
 (* (use "test.sml") *)
