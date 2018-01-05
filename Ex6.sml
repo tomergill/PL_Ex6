@@ -49,6 +49,16 @@ fun rotate ([], n) =
             in
                 sublist(ls, m, len) @ sublist(ls, 0, m)
             end;
+            
+
+fun split [] = ([], [])
+|   split (h::[]) = ([h], [])
+|   split (h1::h2::rest) = 
+        let
+            val (l1, l2) = split(rest)
+        in
+            (h1::l1, h2::l2)
+        end;
 
 
 (* (use "test.sml") *)
